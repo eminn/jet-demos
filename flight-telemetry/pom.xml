@@ -32,7 +32,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>com.hazelcast.jet.demo.FlightTelemetry</mainClass>
+                            <mainClass>com.hazelcast.jet.demo.FlightTelemetryUsingCoreAPI</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -51,7 +51,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.6.0</version>
                 <configuration>
-                    <mainClass>com.hazelcast.jet.demo.FlightTelemetry</mainClass>
+                    <mainClass>com.hazelcast.jet.demo.FlightTelemetryUsingCoreAPI</mainClass>
                 </configuration>
             </plugin>
         </plugins>

@@ -1,10 +1,15 @@
+package com.hazelcast.jet.demo.core;
+
 import com.hazelcast.jet.Jet;
 import com.hazelcast.jet.JetInstance;
 import com.hazelcast.jet.core.DAG;
 import com.hazelcast.jet.core.Processor;
 import com.hazelcast.jet.core.TimestampKind;
 import com.hazelcast.jet.core.Vertex;
+import com.hazelcast.jet.core.processor.DiagnosticProcessors;
 import com.hazelcast.jet.datamodel.TimestampedEntry;
+import com.hazelcast.jet.demo.SerializableBufferedImage;
+import com.hazelcast.jet.demo.WebcamSource;
 import com.hazelcast.jet.function.DistributedFunction;
 import com.hazelcast.jet.function.DistributedSupplier;
 import com.hazelcast.jet.function.DistributedToLongFunction;
@@ -20,7 +25,6 @@ import static com.hazelcast.jet.core.ProcessorSupplier.of;
 import static com.hazelcast.jet.core.WatermarkEmissionPolicy.emitByFrame;
 import static com.hazelcast.jet.core.WatermarkGenerationParams.wmGenParams;
 import static com.hazelcast.jet.core.WatermarkPolicies.limitingTimestampAndWallClockLag;
-import static com.hazelcast.jet.core.processor.DiagnosticProcessors.peekInputP;
 import static com.hazelcast.jet.core.processor.Processors.accumulateByFrameP;
 import static com.hazelcast.jet.core.processor.Processors.combineToSlidingWindowP;
 import static com.hazelcast.jet.core.processor.Processors.insertWatermarksP;
@@ -33,7 +37,7 @@ import static java.util.Collections.singletonList;
  * Frames constituting a second of stream will be aggregated together to find
  * maximum scored classification and that will be sent a GUI sink to be shown on the screen.
  */
-public class RealtimeImageRecognition {
+public class RealtimeImageRecognitionUsingCoreAPI {
 
     static {
         System.setProperty("hazelcast.logging.type", "slf4j");
@@ -56,7 +60,7 @@ public class RealtimeImageRecognition {
     private static DAG buildDAG(String modelPath) {
         DAG dag = new DAG();
 
-        Vertex webcamSource = dag.newVertex("webcam source", WebcamSource.webcam());
+        Vertex webcamSource = dag.newVertex("webcam source", WebcamSource.metaSupplier());
         Vertex classifierVertex = dag.newVertex("classifier", of(() -> new ClassifierProcessor(modelPath)));
 
         TumblingWindowDef tumbling = WindowDefinition.tumbling(1000);
@@ -88,7 +92,7 @@ public class RealtimeImageRecognition {
                 ),
                 TimestampedEntry::new)).localParallelism(1);
 
-        Vertex guiSink = dag.newVertex("gui", peekInputP(GUISink.sink()));
+        Vertex guiSink = dag.newVertex("gui", DiagnosticProcessors.peekInputP(GUISink.metaSupplier()));
 
         dag.edge(between(webcamSource, classifierVertex))
            .edge(between(classifierVertex, insertWm))

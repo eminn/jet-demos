@@ -1,3 +1,5 @@
+package com.hazelcast.jet.demo;
+
 import boofcv.gui.image.ImagePanel;
 import boofcv.gui.image.ShowImages;
 import boofcv.io.webcamcapture.UtilWebcamCapture;
@@ -8,13 +10,13 @@ import com.hazelcast.jet.core.CloseableProcessorSupplier;
 import com.hazelcast.jet.core.ProcessorMetaSupplier;
 import com.hazelcast.jet.core.ProcessorSupplier;
 import com.hazelcast.jet.core.processor.Processors;
-import com.hazelcast.jet.datamodel.TimestampedEntry;
 import com.hazelcast.jet.function.DistributedFunction;
+import com.hazelcast.jet.pipeline.Sources;
+import com.hazelcast.jet.pipeline.StreamSource;
 import com.hazelcast.nio.Address;
 import com.hazelcast.partition.strategy.StringPartitioningStrategy;
 import java.awt.image.BufferedImage;
 import java.io.Closeable;
-import java.io.IOException;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
@@ -25,7 +27,7 @@ import static java.util.Collections.singletonList;
  */
 public class WebcamSource extends AbstractProcessor implements Closeable {
 
-    private Traverser<TimestampedEntry> traverser;
+    private Traverser<SerializableBufferedImage> traverser;
     private Webcam webcam;
     private ImagePanel gui;
     private long lastPoll;
@@ -48,7 +50,7 @@ public class WebcamSource extends AbstractProcessor implements Closeable {
                 lastPoll = now;
                 BufferedImage image = webcam.getImage();
                 gui.setImageRepaint(image);
-                traverser = Traverser.over(new TimestampedEntry<>(now, new SerializableBufferedImage(image), null));
+                traverser = Traverser.over(new SerializableBufferedImage(image));
             } else {
                 return false;
             }
@@ -65,12 +67,16 @@ public class WebcamSource extends AbstractProcessor implements Closeable {
     }
 
 
-    public static ProcessorMetaSupplier webcam() {
+    public static StreamSource<SerializableBufferedImage> webcam() {
+        return Sources.streamFromProcessor("webcam", new MetaSupplier());
+    }
+
+    public static ProcessorMetaSupplier metaSupplier() {
         return new MetaSupplier();
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         if (webcam != null) {
             webcam.close();
         }

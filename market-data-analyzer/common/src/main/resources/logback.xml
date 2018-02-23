@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-	<appender name="SYSOUT_BLUE" class="ch.qos.logback.core.ConsoleAppender">
+	<appender name="SYSOUT_BLUE" class="ch.qos.logback.com.hazelcast.jet.demo.core.ConsoleAppender">
 		<encoder>
 			<pattern>%d{HH:mm:ss.SSS} %highlight(%-5level) %thread
 				%white(%logger{40}) - %blue(%msg) %n</pattern>
 		</encoder>
 	</appender>
-	<appender name="SYSOUT_CYAN" class="ch.qos.logback.core.ConsoleAppender">
+	<appender name="SYSOUT_CYAN" class="ch.qos.logback.com.hazelcast.jet.demo.core.ConsoleAppender">
 		<encoder>
 			<pattern>%d{HH:mm:ss.SSS} %highlight(%-5level) %thread
 				%white(%logger{40}) - %cyan(%msg) %n</pattern>
 		</encoder>
 	</appender>
-	<appender name="SYSOUT_MAGENTA" class="ch.qos.logback.core.ConsoleAppender">
+	<appender name="SYSOUT_MAGENTA" class="ch.qos.logback.com.hazelcast.jet.demo.core.ConsoleAppender">
 		<encoder>
 			<pattern>%d{HH:mm:ss.SSS} %highlight(%-5level) %thread
 				%white(%logger{40}) - %magenta(%msg) %n</pattern>
 		</encoder>
 	</appender>
-	<appender name="SYSOUT_RED" class="ch.qos.logback.core.ConsoleAppender">
+	<appender name="SYSOUT_RED" class="ch.qos.logback.com.hazelcast.jet.demo.core.ConsoleAppender">
 		<encoder>
 			<pattern>%d{HH:mm:ss.SSS} %highlight(%-5level) %thread
 				%white(%logger{40}) - %red(%msg) %n</pattern>
 		</encoder>
 	</appender>
-	<appender name="SYSOUT_YELLOW" class="ch.qos.logback.core.ConsoleAppender">
+	<appender name="SYSOUT_YELLOW" class="ch.qos.logback.com.hazelcast.jet.demo.core.ConsoleAppender">
 		<encoder>
 			<pattern>%d{HH:mm:ss.SSS} %highlight(%-5level) %thread
 				%white(%logger{40}) - %yellow(%msg) %n</pattern>
